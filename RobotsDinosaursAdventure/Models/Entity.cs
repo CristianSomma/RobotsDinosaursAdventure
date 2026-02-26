@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotsDinosaursAdventure.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,19 +10,26 @@ namespace RobotsDinosaursAdventure.Models
     public abstract class Entity
     {
         private readonly int _waitingThreshold;
-        protected static int _entityId = 0;
+        private readonly string _name;
+        private static int _entityId = 0;
+        protected readonly ILogger? _logger;
 
-        protected Entity(uint waitingThreshold = 1000u)
+        protected Entity(string name, uint waitingThreshold = 1000u, ILogger? logger = default)
         {
-            _waitingThreshold = (int)waitingThreshold;
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(name);
             _entityId++;
+            _name = $"{name} {_entityId}".ToUpper();
+            _waitingThreshold = (int)waitingThreshold;
+            _logger = logger;
         }
 
-        protected async Task Wait()
+        public string Name => _name;
+
+        protected async Task Wait(CancellationToken token)
         {
             int timeToWait = Random.Shared.Next(0, _waitingThreshold);
 
-            await Task.Delay(timeToWait);
+            await Task.Delay(timeToWait, token);
         }
     }
 }
