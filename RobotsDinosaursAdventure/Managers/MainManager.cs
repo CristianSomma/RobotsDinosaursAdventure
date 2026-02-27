@@ -1,4 +1,4 @@
-﻿using RobotsDinosaursAdventure.Interfaces;
+using RobotsDinosaursAdventure.Interfaces;
 using RobotsDinosaursAdventure.Models;
 using System;
 using System.Collections.Generic;
@@ -44,8 +44,6 @@ namespace RobotsDinosaursAdventure.Managers
             {
                 Dinosaur newDinosaur = new Dinosaur(
                     (uint)portalSize,
-                    _tokenSource,
-                    _tokenSource.Token,
                     _logger);
 
                 entitiesActions.Add(
