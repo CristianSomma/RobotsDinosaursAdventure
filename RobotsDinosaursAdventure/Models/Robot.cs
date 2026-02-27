@@ -13,11 +13,16 @@ namespace RobotsDinosaursAdventure.Models
 
         public async Task ProduceComponents(SharedQueue<Component> queue, CancellationToken token)
         {
+            /*
+             * -> Viene creato un nuovo componente
+             * -> Il componente viene messo in coda
+             */
+
             while (!token.IsCancellationRequested)
             {
                 await Wait(token);
                 Component newComponent = new Component();
-                _logger?.Log($"{Name} has just collected the component");
+                _logger?.Log($"{Name} has just collected the {newComponent.Name}");
 
                 await queue.Enqueue(newComponent);
             }

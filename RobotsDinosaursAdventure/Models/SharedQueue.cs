@@ -7,7 +7,11 @@ namespace RobotsDinosaursAdventure.Models
     public class SharedQueue<T> 
         : IAsyncContainer<T>, IAsyncQueue<T>
     {
+        // coda usata dal wrapper
         private CollectionsLibrary.Collections.Queue<T> _queue;
+
+        // mutex per accesso alle azioni della coda e semaforo
+        // che tiene conto di quanti sono gli elementi nella coda disponibili
         private readonly SemaphoreSlim _mutex, _itemsAvailable;
         private readonly CancellationToken _token;
 
@@ -40,6 +44,9 @@ namespace RobotsDinosaursAdventure.Models
             {
                 _queue.Clear();
 
+                // finché il contatore del semaforo è maggiore di zero,
+                // allora viene aspettato con attesa di zero millisecondi
+                // per decrementare di 1 il contatore fino a zero
                 while (_itemsAvailable.CurrentCount > 0)
                     _itemsAvailable.Wait(0);
             }

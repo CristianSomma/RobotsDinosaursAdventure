@@ -28,7 +28,6 @@ namespace RobotsDinosaursAdventure.Models
         protected async Task Wait(CancellationToken token)
         {
             int timeToWait = Random.Shared.Next(0, _waitingThreshold);
-
             await Task.Delay(timeToWait, token);
         }
     }
