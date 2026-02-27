@@ -1,25 +1,25 @@
-﻿using CollectionsLibrary.Collections;
-using CollectionsLibrary.Interfaces;
-using RobotsDinosaursAdventure.Interfaces;
+﻿using RobotsDinosaursAdventure.Interfaces;
+using System;
+using System.Text;
 
 namespace RobotsDinosaursAdventure.Models
 {
-    public class SharedQueue<T> 
-        : IAsyncContainer<T>, IAsyncQueue<T>
+    public class SharedStack<T> 
+        : IAsyncContainer<T>, IAsyncStack<T>
     {
-        private CollectionsLibrary.Collections.Queue<T> _queue;
+        private CollectionsLibrary.Collections.Stack<T> _stack;
         private readonly SemaphoreSlim _mutex, _itemsAvailable;
         private readonly CancellationToken _token;
 
-        public SharedQueue(CancellationToken token)
+        public SharedStack(CancellationToken token)
         {
-            _queue = new CollectionsLibrary.Collections.Queue<T>();
+            _stack = new CollectionsLibrary.Collections.Stack<T>();
             _mutex = new SemaphoreSlim(1, 1);
             _itemsAvailable = new SemaphoreSlim(0);
             _token = token;
         }
 
-        public SharedQueue(IEnumerable<T> items, CancellationToken token)
+        public SharedStack(IEnumerable<T> items, CancellationToken token)
         {
             Build(items);
             _mutex = new SemaphoreSlim(1, 1);
@@ -29,7 +29,7 @@ namespace RobotsDinosaursAdventure.Models
 
         public void Build(IEnumerable<T> items)
         {
-            _queue = new CollectionsLibrary.Collections.Queue<T>(items);
+            _stack = new CollectionsLibrary.Collections.Stack<T>(items);
         }
 
         public async Task Clear()
@@ -38,10 +38,7 @@ namespace RobotsDinosaursAdventure.Models
 
             try
             {
-                _queue.Clear();
-
-                while (_itemsAvailable.CurrentCount > 0)
-                    _itemsAvailable.Wait(0);
+                ClearAndReset();
             }
             finally
             {
@@ -52,10 +49,10 @@ namespace RobotsDinosaursAdventure.Models
         public async Task<int> GetLength()
         {
             await _mutex.WaitAsync(_token);
-            
+
             try
             {
-                return _queue.GetLength();
+                return _stack.GetLength();
             }
             finally
             {
@@ -69,7 +66,22 @@ namespace RobotsDinosaursAdventure.Models
 
             try
             {
-                return _queue.IsEmpty();
+                return _stack.IsEmpty();
+            }
+            finally
+            {
+                _mutex.Release();
+            }
+        }
+
+        public async Task Push(T item)
+        {
+            await _mutex.WaitAsync(_token);
+
+            try
+            {
+                _stack.Push(item);
+                _itemsAvailable.Release();
             }
             finally
             {
@@ -83,7 +95,7 @@ namespace RobotsDinosaursAdventure.Models
 
             try
             {
-                return _queue.Peek();
+                return _stack.Peek();
             }
             finally
             {
@@ -91,15 +103,15 @@ namespace RobotsDinosaursAdventure.Models
             }
         }
 
-        public async Task<T> Dequeue()
+        public async Task<T> Pop()
         {
             await _itemsAvailable.WaitAsync(_token);
-
+            
             await _mutex.WaitAsync(_token);
 
             try
             {
-                return _queue.Dequeue();
+                return _stack.Pop();
             }
             finally
             {
@@ -107,14 +119,19 @@ namespace RobotsDinosaursAdventure.Models
             }
         }
 
-        public async Task Enqueue(T item)
+        public async Task<bool> TryClear(Predicate<int> predicate)
         {
             await _mutex.WaitAsync(_token);
 
             try
             {
-                _queue.Enqueue(item);
-                _itemsAvailable.Release();
+                if (predicate(_stack.GetLength()))
+                {
+                    ClearAndReset();
+                    return true;
+                }
+
+                return false;
             }
             finally
             {
@@ -122,5 +139,12 @@ namespace RobotsDinosaursAdventure.Models
             }
         }
 
+        private void ClearAndReset()
+        {
+            _stack.Clear();
+
+            while (_itemsAvailable.CurrentCount > 0)
+                _itemsAvailable.Wait(0);
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RobotsDinosaursAdventure.Models
 {
-    public class Component
+    public struct Component
     {
         private readonly string _name;
         private static int _idCounter = 0;
