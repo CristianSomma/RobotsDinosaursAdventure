@@ -50,7 +50,7 @@ namespace RobotsDinosaursAdventure.Managers
                     newDinosaur.Build(
                         componentsQueue,
                         portalStack,
-                        _tokenSource.Token
+                        _tokenSource
                         ));
             }
 

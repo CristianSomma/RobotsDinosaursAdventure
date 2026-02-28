@@ -16,7 +16,7 @@ namespace RobotsDinosaursAdventure.Models
 
         protected Entity(string name, uint waitingThreshold = 1000u, ILogger? logger = default)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(name);
+            ArgumentNullException.ThrowIfNullOrEmpty(name);
             _entityId++;
             _name = $"{name} {_entityId}".ToUpper();
             _waitingThreshold = (int)waitingThreshold;
