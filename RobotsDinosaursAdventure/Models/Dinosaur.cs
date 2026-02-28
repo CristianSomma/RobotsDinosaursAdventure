@@ -10,10 +10,11 @@ namespace RobotsDinosaursAdventure.Models
         private readonly int _portalSizeTarget;
 
         public Dinosaur(
+            string name,
             uint portalSizeTarget, 
             ILogger? logger = default)
             
-            : base("Dinosaur", 4500u, logger)
+            : base(name, 4500u, logger)
         {
             _portalSizeTarget = (int)portalSizeTarget;
         }
@@ -21,7 +22,7 @@ namespace RobotsDinosaursAdventure.Models
         public async Task Build(
             SharedQueue<Component> componentsQueue, 
             SharedStack<Component> portalStack,
-            CancellationTokenSource tokenSource)
+            CancellationTokenSource? tokenSource = default)
         {
             /*
              * -> finché il token non ordina di fermare l'esecuzione del metodo
@@ -30,10 +31,13 @@ namespace RobotsDinosaursAdventure.Models
              * -> Se lo stack supera la dimensione massima, lo svuota
              */
 
+            CancellationToken token = tokenSource is default(CancellationTokenSource)
+                ? CancellationToken.None
+                : tokenSource.Token;
 
-            while (!tokenSource.Token.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
-                await Wait(tokenSource.Token);
+                await Wait(token);
                 Component component = await componentsQueue.Dequeue();
 
                 await portalStack.Push(component);
@@ -45,7 +49,7 @@ namespace RobotsDinosaursAdventure.Models
                 }))
                 {
                     _logger?.LogWarning("The portal is completed");
-                    tokenSource.Cancel();
+                    tokenSource?.Cancel();
                 }
             }
         }

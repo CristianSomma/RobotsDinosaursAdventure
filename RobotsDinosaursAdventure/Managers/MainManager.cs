@@ -30,7 +30,7 @@ namespace RobotsDinosaursAdventure.Managers
             // dei componenti
             for (int i = 0; i < numberOfRobots; i++)
             {
-                Robot newRobot = new Robot(_logger);
+                Robot newRobot = new Robot($"Robot {i}", _logger);
 
                 entitiesActions.Add(
                     newRobot.ProduceComponents(
@@ -43,6 +43,7 @@ namespace RobotsDinosaursAdventure.Managers
             for (int i = 0; i < numberOfDinosaurs; i++)
             {
                 Dinosaur newDinosaur = new Dinosaur(
+                    $"Dinosaur {i}",
                     (uint)portalSize,
                     _logger);
 

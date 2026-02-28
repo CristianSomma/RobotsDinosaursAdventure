@@ -15,7 +15,7 @@ namespace RobotsDinosaursAdventure.Models
         private readonly SemaphoreSlim _mutex, _itemsAvailable;
         private readonly CancellationToken _token;
 
-        public SharedQueue(CancellationToken token)
+        public SharedQueue(CancellationToken token = default)
         {
             _queue = new CollectionsLibrary.Collections.Queue<T>();
             _mutex = new SemaphoreSlim(1, 1);
@@ -23,7 +23,7 @@ namespace RobotsDinosaursAdventure.Models
             _token = token;
         }
 
-        public SharedQueue(IEnumerable<T> items, CancellationToken token)
+        public SharedQueue(IEnumerable<T> items, CancellationToken token = default)
         {
             Build(items);
             _mutex = new SemaphoreSlim(1, 1);

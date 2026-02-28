@@ -8,10 +8,10 @@ namespace RobotsDinosaursAdventure.Models
 {
     public class Robot : Entity
     {
-        public Robot(ILogger? logger = default) 
-            : base("Robot", 3000u, logger) { }
+        public Robot(string name, ILogger? logger = default) 
+            : base(name, 3000u, logger) { }
 
-        public async Task ProduceComponents(SharedQueue<Component> queue, CancellationToken token)
+        public async Task ProduceComponents(SharedQueue<Component> queue, CancellationToken token = default)
         {
             /*
              * -> Viene creato un nuovo componente

@@ -11,7 +11,7 @@ namespace RobotsDinosaursAdventure.Models
 
         public Component()
         {
-            _idCounter++;
+            Interlocked.Increment(ref _idCounter);
             _name = $"Component {_idCounter}";
         }
 

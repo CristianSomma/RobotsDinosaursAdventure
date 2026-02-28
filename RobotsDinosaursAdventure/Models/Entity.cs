@@ -11,21 +11,19 @@ namespace RobotsDinosaursAdventure.Models
     {
         private readonly int _waitingThreshold;
         private readonly string _name;
-        private static int _entityId = 0;
         protected readonly ILogger? _logger;
 
         protected Entity(string name, uint waitingThreshold = 1000u, ILogger? logger = default)
         {
             ArgumentNullException.ThrowIfNullOrEmpty(name);
-            _entityId++;
-            _name = $"{name} {_entityId}".ToUpper();
+            _name = name.ToUpper();
             _waitingThreshold = (int)waitingThreshold;
             _logger = logger;
         }
 
         public string Name => _name;
 
-        protected async Task Wait(CancellationToken token)
+        protected async Task Wait(CancellationToken token = default)
         {
             int timeToWait = Random.Shared.Next(0, _waitingThreshold);
             await Task.Delay(timeToWait, token);

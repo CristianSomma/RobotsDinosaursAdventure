@@ -11,7 +11,7 @@ namespace RobotsDinosaursAdventure.Models
         private readonly SemaphoreSlim _mutex, _itemsAvailable;
         private readonly CancellationToken _token;
 
-        public SharedStack(CancellationToken token)
+        public SharedStack(CancellationToken token = default)
         {
             _stack = new CollectionsLibrary.Collections.Stack<T>();
             _mutex = new SemaphoreSlim(1, 1);
@@ -19,7 +19,7 @@ namespace RobotsDinosaursAdventure.Models
             _token = token;
         }
 
-        public SharedStack(IEnumerable<T> items, CancellationToken token)
+        public SharedStack(IEnumerable<T> items, CancellationToken token = default)
         {
             Build(items);
             _mutex = new SemaphoreSlim(1, 1);
