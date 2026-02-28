@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RobotsDinosaursAdventure.Models
+namespace RobotsDinosaursAdventure.Managers
 {
     public class ConsoleLogger : ILogger
     {
