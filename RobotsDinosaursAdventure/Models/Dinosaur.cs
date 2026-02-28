@@ -43,12 +43,9 @@ namespace RobotsDinosaursAdventure.Models
                 await portalStack.Push(component);
                 _logger?.Log($"{Name} used {component.Name} to assemble the portal.");
 
-                if(await portalStack.TryClear(length =>
+                if(await portalStack.TryClear(length => length >= _portalSizeTarget ))
                 {
-                    return length >= _portalSizeTarget;
-                }))
-                {
-                    _logger?.LogWarning("The portal is completed");
+                    _logger?.LogWarning("A portal is completed");
                     tokenSource?.Cancel();
                 }
             }

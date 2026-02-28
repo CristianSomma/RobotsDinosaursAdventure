@@ -24,7 +24,9 @@ namespace RobotsDinosaursAdventure.Managers
             var portalStack = new SharedStack<Component>(_tokenSource.Token);
             
             // lista dei task da aspettare prima di chiudere questa funzione
-            List<Task> entitiesActions = new List<Task>();
+            List<Task> tasksRunning = new List<Task>();
+
+            tasksRunning.Add(Task.Run(() => ListenForInput(_tokenSource.Token)));
 
             // genera il numero di robot definiti, e li avvia alla produzione
             // dei componenti
@@ -32,7 +34,7 @@ namespace RobotsDinosaursAdventure.Managers
             {
                 Robot newRobot = new Robot($"Robot {i}", _logger);
 
-                entitiesActions.Add(
+                tasksRunning.Add(
                     newRobot.ProduceComponents(
                     componentsQueue,
                     _tokenSource.Token));
@@ -47,7 +49,7 @@ namespace RobotsDinosaursAdventure.Managers
                     (uint)portalSize,
                     _logger);
 
-                entitiesActions.Add(
+                tasksRunning.Add(
                     newDinosaur.Build(
                         componentsQueue,
                         portalStack,
@@ -55,7 +57,22 @@ namespace RobotsDinosaursAdventure.Managers
                         ));
             }
 
-            await Task.WhenAll(entitiesActions);
+            await Task.WhenAll(tasksRunning);
+        }
+
+        private void ListenForInput(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                ConsoleKeyInfo keyPressed = Console.ReadKey(intercept: true);
+
+                if(keyPressed.Key == ConsoleKey.Escape)
+                {
+                    _logger?.LogWarning("SIMULATION TERMINATED");
+                    _tokenSource.Cancel();
+                    break;
+                }
+            }
         }
     }
 }
