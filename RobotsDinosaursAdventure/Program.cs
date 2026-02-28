@@ -23,11 +23,17 @@ namespace RobotsDinosaursAdventure
             Parse(out portalSize, num => num < 0);
 
             Console.WriteLine("SIMULATION STARTED:");
-            await new MainManager(new ConsoleLogger())
+            
+            try
+            {
+
+                await new MainManager(new ConsoleLogger())
                 .Simulate(
-                numberOfRobots, 
-                numberOfDinosaurs, 
+                numberOfRobots,
+                numberOfDinosaurs,
                 portalSize);
+
+            } catch { }
         }
 
         static void Parse(out int variable, Predicate<int>? predicate = null)
