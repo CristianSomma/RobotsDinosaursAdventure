@@ -22,7 +22,7 @@ namespace RobotsDinosaursAdventure.Models
         public async Task Build(
             SharedQueue<Component> componentsQueue, 
             SharedStack<Component> portalStack,
-            CancellationTokenSource? tokenSource = default)
+            CancellationToken token)
         {
             /*
              * -> finché il token non ordina di fermare l'esecuzione del metodo
@@ -30,10 +30,6 @@ namespace RobotsDinosaursAdventure.Models
              * -> Lo inserisce nello stack del portale
              * -> Se lo stack supera la dimensione massima, lo svuota
              */
-
-            CancellationToken token = tokenSource is default(CancellationTokenSource)
-                ? CancellationToken.None
-                : tokenSource.Token;
 
             while (!token.IsCancellationRequested)
             {
@@ -46,7 +42,6 @@ namespace RobotsDinosaursAdventure.Models
                 if(await portalStack.TryClear(length => length >= _portalSizeTarget ))
                 {
                     _logger?.LogWarning("A portal is completed");
-                    tokenSource?.Cancel();
                 }
             }
         }

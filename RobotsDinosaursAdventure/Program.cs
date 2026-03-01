@@ -22,8 +22,12 @@ namespace RobotsDinosaursAdventure
             Console.Write("Enter the components needed for portal construction:\n> ");
             Parse(out portalSize, num => num < 0);
 
+            Console.Clear();
             Console.WriteLine("SIMULATION STARTED:");
             
+
+            // il try-catch serve per catturare l'eccezione lanciata
+            // dalla richiesta di cancellazione del token.
             try
             {
 

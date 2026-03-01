@@ -30,7 +30,7 @@ namespace RobotsDinosaursAdventure.Managers
 
             // genera il numero di robot definiti, e li avvia alla produzione
             // dei componenti
-            for (int i = 0; i < numberOfRobots; i++)
+            for (int i = 1; i <= numberOfRobots; i++)
             {
                 Robot newRobot = new Robot($"Robot {i}", _logger);
 
@@ -42,7 +42,7 @@ namespace RobotsDinosaursAdventure.Managers
 
             // genera il numero di dinosauri definiti e li avvia alla costruzione
             // del portale
-            for (int i = 0; i < numberOfDinosaurs; i++)
+            for (int i = 1; i <= numberOfDinosaurs; i++)
             {
                 Dinosaur newDinosaur = new Dinosaur(
                     $"Dinosaur {i}",
@@ -53,7 +53,7 @@ namespace RobotsDinosaursAdventure.Managers
                     newDinosaur.Build(
                         componentsQueue,
                         portalStack,
-                        _tokenSource
+                        _tokenSource.Token
                         ));
             }
 
@@ -62,6 +62,15 @@ namespace RobotsDinosaursAdventure.Managers
 
         private void ListenForInput(CancellationToken token)
         {
+            /*
+             * -> Finché il token non riceve la richiesta di cancellazione il metodo
+             *    continua ad avanzare in parallelo al programma
+             *
+             * -> Si ascolta se viene premuto un tasto in console...
+             * 
+             * -> Quando un tasto è premuto, se è ESC, allora:
+             *      - manda la richiesta di cancellazione per terminare il programma
+             */
             while (!token.IsCancellationRequested)
             {
                 ConsoleKeyInfo keyPressed = Console.ReadKey(intercept: true);
